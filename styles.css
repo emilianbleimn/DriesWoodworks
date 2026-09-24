@@ -74,6 +74,7 @@ h1 em { color: var(--hazel); }
 .work img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 .work .wide { grid-column: 1 / -1; }
 .work .wide img { aspect-ratio: 16 / 9; }
+.work .land img { aspect-ratio: 5 / 4; }
 figcaption { margin-top: 12px; font-size: 0.9rem; color: var(--muted); }
 
 /* Über */
@@ -102,6 +103,39 @@ cite {
   font-size: 0.85rem;
   color: var(--muted);
 }
+
+h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1.25;
+  color: var(--walnut);
+  margin: 0 0 20px;
+}
+
+/* Verpackung */
+.gift {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: center;
+  padding-block: 24px 120px;
+}
+.gift img { width: 100%; }
+.gift p { margin: 0; color: var(--muted); max-width: 26em; }
+
+/* Werkstatt */
+.maker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  padding-block: 120px;
+}
+.maker p { color: var(--muted); max-width: 30em; }
+.maker p:last-child { margin-bottom: 0; }
+.maker img { width: 100%; max-width: 440px; margin-left: auto; aspect-ratio: 4 / 5; object-fit: cover; }
 
 /* Shop */
 .shop {
@@ -143,6 +177,11 @@ a:focus-visible { outline: 2px solid var(--hazel); outline-offset: 3px; }
   .work { grid-template-columns: 1fr; gap: 40px; padding-block: 72px; }
   .about { grid-template-columns: 1fr; gap: 40px; padding-block: 64px; }
   .shop { padding: 32px 24px; margin-bottom: 64px; }
+  .gift, .maker { grid-template-columns: 1fr; gap: 32px; }
+  .gift { padding-block: 8px 72px; }
+  .maker { padding-block: 72px; }
+  .maker figure { order: -1; }
+  .maker img { margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
