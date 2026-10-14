@@ -1,7 +1,7 @@
 # PEAZE — Website
 
 Statische Website für **PEAZE**, die 90s-inspirierte Padel-Kollektion
-(Tracksuit, Shorts, Tanktop, Padelbälle) in sechs Farben.
+(Tracksuit, Shorts, Tanktop, Padelbälle) in acht Farben.
 
 Gestaltet im Stil von [noneofus.de](https://www.noneofus.de): cremefarbener
 Grund, fast schwarze Typo, durchgehend Versalien, Laufband oben,
@@ -15,10 +15,12 @@ oder den Ordner über GitHub Pages / beliebigen Webspace ausliefern.
 
 ```
 peaze/
-├── index.html            Inhalt + SVG-Sprite (Logo & Produkt-Zeichnungen)
-├── styles.css            Gestaltung (Farben als Variablen in :root)
-├── app.js                Farbwähler, Warenkorb, Drawers, Reveal
-└── assets/spec-sheet.jpg Technisches Datenblatt PZ-001
+├── index.html              Inhalt + SVG-Sprite (Logo & Icons)
+├── styles.css              Gestaltung (Farben als Variablen in :root)
+├── app.js                  Farbwähler, Warenkorb, Drawers, Reveal
+└── assets/
+    ├── collection.jpg      Übersichtsblatt der Kollektion
+    └── products/           40 freigestellte Produktbilder (5 Teile x 8 Farben)
 ```
 
 ## Was drin ist
@@ -30,37 +32,35 @@ peaze/
   bleibt über Seitenaufrufe erhalten (`localStorage`).
 - **Menü- und Warenkorb-Drawer** — auf dem Handy per Wischgeste schliessbar,
   dazu Escape, Klick daneben und Schliessen-Button.
-- **Produktzeichnungen** — als SVG gezeichnet, nicht fotografiert: beliebig
-  skalierbar und über CSS-Variablen einfärbbar.
+- **Produktbilder** — aus dem Übersichtsblatt freigestellt, ein PNG-Freisteller
+  je Teil und Farbe. Alle Farben eines Teils liegen auf derselben Leinwandgrösse,
+  damit beim Farbwechsel nichts springt.
 
 ## Farben ändern
 
-Alle Farbwelten stehen oben in `styles.css`:
+Eine Farbwelt besteht aus drei Dingen:
 
-```css
-[data-colorway="tuerkis"]{--g:#01788e;--gd:#015c6b;--gp:#ececed;--gm:#c6c6ce;--gl:#fff;--accent:#01788e}
-```
+1. Ein Akzent oben in `styles.css`:
+   `[data-colorway="tuerkis"]{--accent:#027180}`
+2. Ein Eintrag in `WAYS` in `app.js`: `tuerkis: 'Türkis'`
+3. Ein Knopf in `index.html`: `<button class="sw" data-way="tuerkis">`
 
-| Variable | Bedeutung |
-|---|---|
-| `--g`  | Hauptfarbe des Kleidungsstücks |
-| `--gd` | Bündchen, Kragen, Bund (dunkler) |
-| `--gp` | Kontrastpanel (weiss) |
-| `--gm` | zweites Panel (grau) |
-| `--gl` | Logo auf dem Kleidungsstück |
-
-Eine neue Farbe braucht denselben Block in `styles.css`, einen Eintrag in
-`WAYS` in `app.js` und einen `.sw`-Button in `index.html`.
+Dazu je ein Bild pro Teil unter `assets/products/<teil>-<farbe>.webp`
+(`jacket`, `pants`, `shorts`, `tank`, `balls`). Fehlt ein Bild, bleibt an der
+Stelle eine Lücke — es gibt keinen Platzhalter.
 
 ## Produkte und Preise ändern
 
 Alles in einem Array oben in `app.js` (`PRODUCTS`), Preise in Cent:
 
 ```js
-{ id:'shorts', art:'g-shorts', vb:'0 0 300 250',
+{ id:'shorts', art:['shorts'],
   name:'PEAZE Sport Shorts', sub:'Mit Seitentaschen · leicht',
   price:4900, sizes:CLOTHING }
 ```
+
+`art` listet die Bilder, die die Karte zeigt — das Complete Set nutzt
+`['jacket','pants','balls']`.
 
 ## Noch nicht angebunden
 
@@ -77,8 +77,9 @@ Rückmeldung an und sendet nichts:
 - Schriften: Michroma (Display) und Jost (Fliesstext) über Google Fonts.
 - Michroma hat kein brauchbares Euro-Zeichen; das `€` wird deshalb in
   `<i class="eur">` gesetzt und in der Fliesstext-Schrift gerendert.
-- Die Produkt-SVGs liegen als `<symbol>` im Sprite und werden per `<use>`
-  eingebunden. Innerhalb eines `<symbol>` braucht jedes `<use>` ein
-  explizites `width`/`height`, sonst erbt es die Grösse des äusseren SVG.
-  Eingefärbt wird über `fill="var(--g)"` direkt am Pfad — CSS-Klassen
-  greifen nicht in den Shadow Tree von `<use>`.
+- Die Produktbilder sind aus `assets/collection.jpg` freigestellt. Das Skript
+  dafür liegt nicht im Repo; die fertigen Bilder schon. Für neue Farben am
+  einfachsten dasselbe Rastermass verwenden.
+- Beim Farbwechsel tauscht `app.js` nur das `src` der Bilder. Die übrigen
+  Farben werden nach dem Laden im Hintergrund vorgeladen, damit der Wechsel
+  ohne Lücke passiert.

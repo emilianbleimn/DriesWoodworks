@@ -13,13 +13,7 @@
   --navy-2:#15233c;
   --white:#fff;
 
-  /* garment colour tokens — overridden per colourway */
-  --g:#01788e;      /* main body        */
-  --gd:#015c6b;     /* rib / collar     */
-  --gp:#ececed;     /* contrast panel   */
-  --gm:#c6c6ce;     /* secondary panel  */
-  --gl:#fff;        /* logo on garment  */
-  --accent:#01788e; /* UI accent        */
+  --accent:#16203a;   /* per-colourway UI accent */
 
   --f-display:"Michroma",system-ui,sans-serif;
   --f-body:"Jost","Helvetica Neue",Arial,sans-serif;
@@ -28,12 +22,15 @@
   --head-h:72px;
 }
 
-[data-colorway="tuerkis"]{--g:#01788e;--gd:#015c6b;--gp:#ececed;--gm:#c6c6ce;--gl:#fff;--accent:#01788e}
-[data-colorway="blau"]   {--g:#0139d6;--gd:#042a9e;--gp:#ececed;--gm:#c6c6ce;--gl:#fff;--accent:#0139d6}
-[data-colorway="rot"]    {--g:#d60008;--gd:#a00006;--gp:#ececed;--gm:#c6c6ce;--gl:#fff;--accent:#d60008}
-[data-colorway="orange"] {--g:#fd6e05;--gd:#c95503;--gp:#ececed;--gm:#c6c6ce;--gl:#fff;--accent:#e35f03}
-[data-colorway="weiss"]  {--g:#ececed;--gd:#c9c9d1;--gp:#fff;  --gm:#b4b4be;--gl:#15233c;--accent:#9a9aa4}
-[data-colorway="schwarz"]{--g:#1c1c1c;--gd:#000;   --gp:#ededf0;--gm:#a9a9b3;--gl:#fff;--accent:#1c1c1c}
+/* Colourways drive the product photography and one UI accent. */
+[data-colorway="navy"]    {--accent:#16203a}
+[data-colorway="tuerkis"] {--accent:#027180}
+[data-colorway="lagon"]   {--accent:#1683a4}
+[data-colorway="latin"]   {--accent:#0b3fc8}
+[data-colorway="rot"]     {--accent:#c2060c}
+[data-colorway="orange"]  {--accent:#d85a02}
+[data-colorway="weiss"]   {--accent:#8d8d96}
+[data-colorway="schwarz"] {--accent:#171717}
 
 *,*::before,*::after{box-sizing:border-box}
 
@@ -114,52 +111,26 @@ button{font:inherit;color:inherit}
   font:400 .54rem/17px var(--f-display);text-align:center;
   transition:scale .2s;
 }
-.hero-top .iconbtn__count{background:var(--cream);color:var(--navy)}
 .iconbtn__count.is-bump{scale:1.35}
 
-/* garment flats ------------------------------------------------------------
-   The flats live in <symbol>/<use> shadow trees, so class selectors cannot
-   reach them. Colour is passed in as inherited custom properties instead and
-   applied with fill="var(--g)" presentation attributes on the paths.
-   Registering the properties lets the colourway swap animate. */
-@property --g  {syntax:"<color>";inherits:true;initial-value:#01788e}
-@property --gd {syntax:"<color>";inherits:true;initial-value:#015c6b}
-@property --gp {syntax:"<color>";inherits:true;initial-value:#ececed}
-@property --gm {syntax:"<color>";inherits:true;initial-value:#c6c6ce}
-@property --gl {syntax:"<color>";inherits:true;initial-value:#ffffff}
-
-@media (prefers-reduced-motion:no-preference){
-  html{transition:--g .45s ease,--gd .45s ease,--gp .45s ease,--gm .45s ease,--gl .45s ease}
+/* product photography ------------------------------------------------------
+   Each product is a cut-out of the catalogue sheet, one file per colourway.
+   Every colourway of a type shares one canvas size, so switching colour never
+   moves or rescales the product. */
+.shot{
+  display:block;width:100%;height:100%;
+  object-fit:contain;object-position:center;
 }
-
-.flat{width:100%;height:auto;display:block}
+.shots{display:flex;align-items:center;justify-content:center;gap:3%;width:100%;height:100%}
+/* min-width:0 — without it a flex item refuses to shrink past its intrinsic
+   width and the photos burst out of the card. */
+.shots .shot{width:auto;height:auto;min-width:0;max-height:100%;flex:0 1 auto}
+.shots--2 .shot{max-width:48%}
+.shots--3 .shot{max-width:31%}
+.shots--3 .shot:last-child{max-height:58%;align-self:flex-end}
 
 /* Michroma has no usable U+20AC — borrow the body face for the euro sign. */
 .eur{font-family:var(--f-body);font-style:normal;font-size:1.06em}
-
-/* ---------- ticker -------------------------------------------------------- */
-
-.ticker{
-  position:relative;z-index:60;
-  background:var(--cream);border-bottom:1px solid var(--line);
-  overflow:hidden;
-}
-.ticker__track{display:flex;width:max-content}
-.ticker__run{
-  display:flex;align-items:center;gap:0;flex:none;
-  padding-block:.78em;
-  font:400 .6rem/1 var(--f-display);letter-spacing:.2em;text-transform:uppercase;
-  animation:ticker 34s linear infinite;
-}
-.ticker__run span{padding-inline:1.6em;white-space:nowrap}
-.ticker__run i{font-style:normal;font-size:.52em;opacity:.4}
-.ticker:hover .ticker__run{animation-play-state:paused}
-@keyframes ticker{to{translate:-100% 0}}
-@media (prefers-reduced-motion:reduce){
-  .ticker__run{animation:none}
-  .ticker__run+.ticker__run{display:none}
-  .ticker__track{width:100%;justify-content:center;flex-wrap:wrap}
-}
 
 /* ---------- header -------------------------------------------------------- */
 
@@ -216,7 +187,7 @@ button{font:inherit;color:inherit}
   display:flex;justify-content:center;align-items:flex-end;gap:clamp(.5rem,3vw,2.5rem);
   width:100%;
 }
-.hero__look .flat{width:clamp(110px,22vw,230px)}
+.hero__look .shot{width:clamp(104px,20vw,210px);height:auto;filter:drop-shadow(0 18px 34px rgb(0 0 0/.45))}
 .hero__scroll{
   position:absolute;inset-block-end:1.1rem;inset-inline:0;margin:0;
   font:400 .54rem/1 var(--f-display);letter-spacing:.34em;text-transform:uppercase;opacity:.5;
@@ -238,7 +209,7 @@ button{font:inherit;color:inherit}
   padding:.3rem;border:0;background:none;cursor:pointer;
 }
 .sw i{
-  width:clamp(34px,6vw,46px);aspect-ratio:1;border-radius:50%;
+  width:clamp(30px,5.2vw,44px);aspect-ratio:1;border-radius:50%;
   background:var(--c);border:1px solid var(--line);
   box-shadow:0 0 0 0 var(--ink);
   transition:box-shadow .22s,scale .22s;
@@ -261,7 +232,7 @@ button{font:inherit;color:inherit}
 @media (min-width:760px){.tiles{grid-template-columns:repeat(3,1fr)}}
 .tile{
   position:relative;isolation:isolate;overflow:hidden;
-  display:grid;place-items:center;
+  display:grid;place-items:center;grid-template-rows:minmax(0,1fr);
   min-height:min(58vw,420px);padding:clamp(2rem,5vw,3.2rem);
   background:var(--cream-2);text-decoration:none;
 }
@@ -269,11 +240,12 @@ button{font:inherit;color:inherit}
 @media (min-width:760px){
   .tile+.tile{border-top:0;border-left:1px solid var(--line)}
 }
-.tile .flat{
-  width:min(88%,430px);max-height:72%;height:100%;
+.tile .shot{
+  width:auto;height:100%;max-width:min(78%,360px);
+  object-fit:contain;
   transition:scale .5s cubic-bezier(.2,.7,.3,1);
 }
-.tile:hover .flat,.tile:focus-visible .flat{scale:1.055}
+.tile:hover .shot,.tile:focus-visible .shot{scale:1.055}
 .tile__label{
   position:absolute;inset-block-end:clamp(1rem,3vw,1.9rem);inset-inline-start:clamp(1rem,3vw,1.9rem);
   font:400 clamp(1rem,2.6vw,1.6rem)/1 var(--f-display);
@@ -294,18 +266,21 @@ button{font:inherit;color:inherit}
   background:var(--white);border:1px solid var(--line);
 }
 .card__media{
-  position:relative;display:grid;place-items:center;
-  padding:clamp(1.2rem,3vw,2rem);background:var(--cream-2);
+  position:relative;display:grid;background:var(--cream-2);
+  padding:clamp(1.2rem,3vw,2rem);
   aspect-ratio:1/1;
-  min-height:0; /* flex item default min-height:auto would let the art win */
+  min-height:0;          /* flex default min-height:auto would let the art win */
+  place-items:stretch;   /* a centred item keeps an auto-height track, and then
+                            the photos' max-height:100% resolves against nothing
+                            and they spill out of the card */
 }
+.card__media > :where(.shot,.shots){min-width:0;min-height:0}
 /* fill the box and let preserveAspectRatio letterbox, so cards of different
    garment proportions still line up across a row */
-.card__media .flat{
-  width:100%;height:100%;
+.card__media .shot,.card__media .shots{
   transition:scale .45s cubic-bezier(.2,.7,.3,1);
 }
-.card:hover .card__media .flat{scale:1.05}
+.card:hover .card__media :where(.shot,.shots){scale:1.05}
 .card__flag{
   position:absolute;inset-block-start:0;inset-inline-start:0;
   padding:.62em 1em;background:var(--ink);color:var(--cream);
@@ -342,6 +317,66 @@ button{font:inherit;color:inherit}
   .card--wide{grid-column:span 2}
   .card--wide .card__media{aspect-ratio:2.1/1}
 }
+
+/* ---------- padel balls --------------------------------------------------- */
+
+.balls{
+  display:grid;gap:clamp(2rem,5vw,3.5rem);
+  grid-template-columns:1fr;align-items:center;
+  padding:clamp(3.5rem,10vh,6.5rem) var(--pad);
+  border-top:1px solid var(--line);background:var(--navy);color:var(--cream);
+}
+@media (min-width:900px){.balls{grid-template-columns:minmax(260px,1fr) 1.6fr}}
+#ballsTitle{
+  font-size:clamp(1.3rem,3.6vw,2.2rem);letter-spacing:.06em;line-height:1.2;
+}
+.balls__lead{margin:1.3rem 0 0;max-width:42ch;color:color-mix(in srgb,var(--cream) 72%,transparent)}
+.balls__facts{
+  list-style:none;display:flex;flex-wrap:wrap;gap:1.8rem;margin:1.8rem 0;padding:0;
+}
+.balls__facts b{
+  display:block;font:400 1.5rem/1 var(--f-display);letter-spacing:.02em;
+}
+.balls__facts span{
+  display:block;margin-top:.5rem;
+  font:400 .52rem/1.4 var(--f-display);letter-spacing:.16em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--cream) 58%,transparent);
+}
+.balls .btn--solid{background:var(--cream);color:var(--navy);border-color:var(--cream)}
+.balls .btn--solid:hover{background:transparent;color:var(--cream)}
+.balls__wall{
+  list-style:none;margin:0;padding:0;
+  display:grid;gap:clamp(.4rem,1.5vw,1rem);
+  grid-template-columns:repeat(2,1fr);
+}
+@media (min-width:560px){.balls__wall{grid-template-columns:repeat(4,1fr)}}
+.ballpick{
+  display:grid;justify-items:center;gap:.6rem;width:100%;
+  padding:.7rem .4rem 1rem;border:1px solid transparent;background:none;cursor:pointer;
+  transition:border-color .22s,background-color .22s;
+}
+.ballpick img{
+  width:100%;height:auto;max-width:150px;
+  transition:scale .35s cubic-bezier(.2,.7,.3,1);
+}
+.ballpick span{
+  font:400 .52rem/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--cream) 55%,transparent);transition:color .22s;
+}
+.ballpick:hover img{scale:1.07}
+.ballpick:hover span{color:var(--cream)}
+[data-colorway="navy"]    .ballpick[data-way="navy"],
+[data-colorway="tuerkis"] .ballpick[data-way="tuerkis"],
+[data-colorway="lagon"]   .ballpick[data-way="lagon"],
+[data-colorway="latin"]   .ballpick[data-way="latin"],
+[data-colorway="rot"]     .ballpick[data-way="rot"],
+[data-colorway="orange"]  .ballpick[data-way="orange"],
+[data-colorway="weiss"]   .ballpick[data-way="weiss"],
+[data-colorway="schwarz"] .ballpick[data-way="schwarz"]{
+  border-color:color-mix(in srgb,var(--cream) 34%,transparent);
+  background:color-mix(in srgb,var(--cream) 7%,transparent);
+}
+.balls :where(a,button):focus-visible{outline-color:var(--cream)}
 
 /* ---------- details ------------------------------------------------------- */
 
@@ -557,7 +592,7 @@ button{font:inherit;color:inherit}
 .cart__list{list-style:none;margin:0;padding:0;display:grid;gap:1px;background:var(--line)}
 .cart__item{display:grid;grid-template-columns:76px 1fr;gap:1rem;padding:1rem;background:var(--cream)}
 .cart__thumb{background:var(--cream-2);display:grid;place-items:center;padding:.4rem;align-self:start}
-.cart__thumb .flat{width:100%}
+.cart__thumb .shot{width:100%;height:auto}
 .cart__info{display:grid;gap:.45rem;align-content:start}
 .cart__name{margin:0;font:400 .64rem/1.4 var(--f-display);letter-spacing:.1em;text-transform:uppercase}
 .cart__opt{margin:0;font-size:.78rem;color:var(--ink-soft)}

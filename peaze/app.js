@@ -18,38 +18,44 @@
 
   const PRODUCTS = [
     {
-      id: 'set', art: 'g-set', vb: '0 20 418 276', wide: true,
+      id: 'set', art: ['jacket', 'pants', 'balls'], wide: true,
       name: 'PEAZE Complete Set', sub: 'Tracksuit + 1 Dose Padelbälle',
       price: 14500, was: 14800, sizes: CLOTHING, flag: '3 <i class="eur">€</i> sparen'
     },
     {
-      id: 'tracksuit', art: 'g-jacket', vb: '0 0 300 372',
+      id: 'tracksuit', art: ['jacket', 'pants'],
       name: 'PEAZE Tracksuit', sub: 'Jacke + Hose · Shell-Polyester',
       price: 12900, sizes: CLOTHING, flag: 'Bestseller'
     },
     {
-      id: 'shorts', art: 'g-shorts', vb: '0 0 300 250',
+      id: 'shorts', art: ['shorts'],
       name: 'PEAZE Sport Shorts', sub: 'Mit Seitentaschen · leicht',
       price: 4900, sizes: CLOTHING
     },
     {
-      id: 'tanktop', art: 'g-tank', vb: '0 0 300 290',
+      id: 'tanktop', art: ['tank'],
       name: 'PEAZE Tanktop', sub: 'Atmungsaktiv · Regular Fit',
       price: 3900, sizes: CLOTHING
     },
     {
-      id: 'balls', art: 'g-balls', vb: '0 0 300 250',
+      id: 'balls', art: ['balls'],
       name: 'PEAZE Padel Balls', sub: '1 Dose · 3 Bälle mit PEAZE-Logo',
       price: 1900, sizes: null
     }
   ];
 
+  // intrinsic box of each product photo, so the markup can reserve the space
+  const ART = {
+    jacket: [294, 362], pants: [264, 440], shorts: [294, 280], tank: [266, 326], balls: [288, 304]
+  };
+
   const BY_ID = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 
   const WAYS = {
-    tuerkis: 'Türkis', blau: 'Latin Blau', rot: 'Rot',
-    orange: 'Orange', weiss: 'Weiss', schwarz: 'Schwarz'
+    navy: 'Navy', tuerkis: 'Türkis', lagon: 'Lagon Blau', latin: 'Latin Blau',
+    rot: 'Rot', orange: 'Orange', weiss: 'Weiss', schwarz: 'Schwarz'
   };
+  const WAY_KEYS = Object.keys(WAYS);
 
   /* --------------------------------------------------------------- toast */
 
@@ -65,6 +71,9 @@
   /* ----------------------------------------------------------- colourway */
 
   const root = document.documentElement;
+  const current = () => root.dataset.colorway || 'navy';
+
+  const shotSrc = (art, way) => `assets/products/${art}-${way}.webp`;
 
   const setWay = way => {
     if (!WAYS[way]) return;
@@ -74,8 +83,19 @@
       b.setAttribute('aria-checked', String(on));
       b.tabIndex = on ? 0 : -1;
     });
+    $$('.shot').forEach(img => {
+      const art = img.dataset.art;
+      if (!art) return;
+      img.src = shotSrc(art, way);
+      if (img.alt) img.alt = img.alt.replace(/ — .*$/, '') + ' — ' + WAYS[way];
+    });
     try { localStorage.setItem('peaze:way', way); } catch {}
   };
+
+  $$('.ballpick').forEach(btn => btn.addEventListener('click', () => {
+    setWay(btn.dataset.way);
+    toast(`Farbe: ${WAYS[btn.dataset.way]}`);
+  }));
 
   const swatches = $$('.sw');
 
@@ -98,7 +118,7 @@
     });
   });
 
-  let startWay = root.dataset.colorway || 'tuerkis';
+  let startWay = current();
   try {
     const saved = localStorage.getItem('peaze:way');
     if (saved && WAYS[saved]) startWay = saved;
@@ -107,8 +127,15 @@
 
   /* ---------------------------------------------------------- product grid */
 
-  const flat = (art, vb, label) =>
-    `<svg class="flat" viewBox="${vb}" role="img" aria-label="${label}"><use href="#${art}"/></svg>`;
+  const shot = (art, label, lazy = true) => {
+    const [w, h] = ART[art];
+    return `<img class="shot" data-art="${art}" src="${shotSrc(art, current())}"` +
+           ` width="${w}" height="${h}" alt="${label}"` +
+           `${lazy ? ' loading="lazy"' : ''} decoding="async">`;
+  };
+  const shots = (arts, label) =>
+    `<div class="shots shots--${arts.length}">` +
+    arts.map((art, i) => shot(art, i === 0 ? label : '')).join('') + '</div>';
 
   const grid = $('#grid');
 
@@ -116,7 +143,7 @@
     <article class="card reveal${p.wide ? ' card--wide' : ''}" data-id="${p.id}">
       <div class="card__media">
         ${p.flag ? `<span class="card__flag">${p.flag}</span>` : ''}
-        ${flat(p.art, p.vb, p.name)}
+        ${shots(p.art, p.name)}
       </div>
       <div class="card__body">
         <h3 class="card__name">${p.name}</h3>
@@ -197,7 +224,7 @@
       const p = BY_ID[l.id];
       return `
         <li class="cart__item" data-i="${i}">
-          <div class="cart__thumb">${flat(p.art, p.vb, '')}</div>
+          <div class="cart__thumb">${shot(p.art[0], '')}</div>
           <div class="cart__info">
             <h4 class="cart__name">${p.name}</h4>
             <p class="cart__opt">${WAYS[l.way]}${l.size ? ` · Grösse ${l.size}` : ''}</p>
@@ -245,6 +272,11 @@
     renderCart();
   });
 
+  $$('[data-add]').forEach(b => {
+    if (b.closest('#grid')) return;            // the grid handles its own
+    b.addEventListener('click', () => addToCart(b.dataset.add, null));
+  });
+
   $('#checkout').addEventListener('click', () => {
     toast('Demo-Shop — Checkout noch nicht angebunden');
   });
@@ -257,7 +289,7 @@
   const hasSDA   = CSS.supports('animation-timeline: scroll()');
   const hasSIT   = CSS.supports('scroll-initial-target', 'nearest');
   const hasPop   = typeof HTMLElement.prototype.showPopover === 'function';
-  const pageBits = [$('#main'), $('.head'), $('.foot'), $('.ticker')].filter(Boolean);
+  const pageBits = [$('#main'), $('.head'), $('.foot')].filter(Boolean);
 
   function makeDrawer(el, side) {
     const scroller = $('.drawer__scroller', el);
@@ -381,7 +413,7 @@
   /* ------------------------------------------------------- scroll reveal */
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const targets = $$('.ways, .tile, .card, .details__grid li, .spec__fig, .spec__meta, .story__copy, .socials, .news__form, .support__row');
+    const targets = $$('.ways, .tile, .card, .balls__intro, .balls__wall li, .details__grid li, .spec__fig, .spec__meta, .story__copy, .socials, .news__form, .support__row');
     targets.forEach(t => t.classList.add('reveal'));
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {
@@ -396,4 +428,15 @@
   /* --------------------------------------------------------------- misc */
 
   $('#year').textContent = String(new Date().getFullYear());
+
+  // Pre-fetch the other colourways once the page is idle, so switching colour
+  // swaps from cache instead of showing a gap while the photo loads.
+  const warm = () => {
+    for (const way of WAY_KEYS) {
+      if (way === current()) continue;
+      for (const art of Object.keys(ART)) new Image().src = shotSrc(art, way);
+    }
+  };
+  if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
+  else addEventListener('load', () => setTimeout(warm, 1200));
 })();
