@@ -98,7 +98,7 @@
     });
   });
 
-  let startWay = root.dataset.colorway;
+  let startWay = root.dataset.colorway || 'tuerkis';
   try {
     const saved = localStorage.getItem('peaze:way');
     if (saved && WAYS[saved]) startWay = saved;
