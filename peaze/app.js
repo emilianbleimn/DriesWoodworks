@@ -19,34 +19,34 @@
   const PRODUCTS = [
     {
       id: 'set', art: ['jacket', 'pants', 'balls'], wide: true,
-      name: 'PEAZE Complete Set', sub: 'Tracksuit + 1 Dose Padelbälle',
+      name: 'PEAZE Komplett-Set', sub: 'Trainingsanzug + 1 Dose Padelbälle',
       price: 14500, was: 14800, sizes: CLOTHING, flag: '3 <i class="eur">€</i> sparen'
     },
     {
       id: 'tracksuit', art: ['jacket', 'pants'],
-      name: 'PEAZE Tracksuit', sub: 'Jacke + Hose · Shell-Polyester',
+      name: 'PEAZE Trainingsanzug', sub: 'Jacke + Hose · glänzendes Polyester',
       price: 12900, sizes: CLOTHING, flag: 'Bestseller'
     },
     {
       id: 'shorts', art: ['shorts'],
-      name: 'PEAZE Sport Shorts', sub: 'Mit Seitentaschen · leicht',
+      name: 'PEAZE Sportshorts', sub: 'Mit Seitentaschen · leicht',
       price: 4900, sizes: CLOTHING
     },
     {
       id: 'tanktop', art: ['tank'],
-      name: 'PEAZE Tanktop', sub: 'Atmungsaktiv · Regular Fit',
+      name: 'PEAZE Tanktop', sub: 'Atmungsaktiv · gerader Schnitt',
       price: 3900, sizes: CLOTHING
     },
     {
       id: 'balls', art: ['balls'],
-      name: 'PEAZE Padel Balls', sub: '1 Dose · 3 Bälle mit PEAZE-Logo',
+      name: 'PEAZE Padelbälle', sub: '1 Dose · 3 Bälle mit PEAZE-Logo',
       price: 1900, sizes: null
     }
   ];
 
   // intrinsic box of each product photo, so the markup can reserve the space
   const ART = {
-    jacket: [294, 362], pants: [264, 440], shorts: [294, 280], tank: [266, 326], balls: [288, 304]
+    jacket: [294, 362], pants: [248, 432], shorts: [288, 278], tank: [248, 322], balls: [288, 304]
   };
 
   const BY_ID = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
@@ -214,7 +214,7 @@
       bodyEl.innerHTML = `
         <div class="cart__empty">
           <p>Dein Warenkorb ist noch leer.</p>
-          <button class="btn btn--solid" type="button" data-close="cartDrawer">Jetzt shoppen</button>
+          <button class="btn btn--solid" type="button" data-close="cartDrawer">Jetzt stöbern</button>
         </div>`;
       footEl.hidden = true;
       return;
@@ -278,7 +278,7 @@
   });
 
   $('#checkout').addEventListener('click', () => {
-    toast('Demo-Shop — Checkout noch nicht angebunden');
+    toast('Demo-Shop — Bestellvorgang noch nicht angebunden');
   });
 
   load();

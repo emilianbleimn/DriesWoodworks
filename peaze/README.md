@@ -1,7 +1,7 @@
 # PEAZE — Website
 
 Statische Website für **PEAZE**, die 90s-inspirierte Padel-Kollektion
-(Tracksuit, Shorts, Tanktop, Padelbälle) in acht Farben.
+(Trainingsanzug, Shorts, Tanktop, Padelbälle) in acht Farben.
 
 Gestaltet im Stil von [noneofus.de](https://www.noneofus.de): cremefarbener
 Grund, fast schwarze Typo, durchgehend Versalien, Laufband oben,
@@ -64,7 +64,7 @@ Alles in einem Array oben in `app.js` (`PRODUCTS`), Preise in Cent:
 
 ## Noch nicht angebunden
 
-Die Seite ist ein Schaufenster ohne Backend. Folgendes zeigt nur eine
+Die Seite ist durchgehend auf Deutsch und ein Schaufenster ohne Backend. Folgendes zeigt nur eine
 Rückmeldung an und sendet nichts:
 
 - **Checkout** — braucht einen Shop (Shopify, Stripe Checkout o. ä.)
